@@ -26,7 +26,7 @@ app.use((err, req, res, next) => {
   }
 });
 
-app.use(cors(corsOptions));
+// app.use(cors(corsOptions));
 // app.options('*', cors(corsOptions)); // Разрешить preflight-запросы
 app.use(cors());
 
