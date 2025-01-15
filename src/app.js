@@ -3,6 +3,7 @@ import cors from 'cors';
 import connectDB from './config/db.js'; // Подключение MongoDB
 import mongoose from 'mongoose';
 import characterRoutes from './routes/characterRoutes.js';
+import authRoutes from './routes/authRoutes.js';
 
 const app = express();
 
@@ -10,13 +11,16 @@ const app = express();
 connectDB();
 
 const corsOptions = {
-  origin: [
+  origin:
+  [
     'http://localhost:3000', // Укажите адрес вашего клиента
     'https://dungeon-crawler-game.vercel.app',
   ],
   methods: ['GET', 'POST', 'PUT', 'DELETE'], // Укажите разрешенные методы
   allowedHeaders: ['Content-Type', 'Authorization'], // Укажите разрешенные заголовки
 };
+// app.options('*', cors(corsOptions)); // Разрешить preflight-запросы
+app.use(cors(corsOptions));
 
 app.use((err, req, res, next) => {
   if (err.name === 'CorsError') {
@@ -25,13 +29,11 @@ app.use((err, req, res, next) => {
       next(err);
   }
 });
-
-// app.use(cors(corsOptions));
-// app.options('*', cors(corsOptions)); // Разрешить preflight-запросы
-app.use(cors());
-
 // Middleware для обработки JSON
 app.use(express.json());
+
+
+
 
 // Подключение маршрутов для создания персонажа
 app.use(characterRoutes);
@@ -51,6 +53,8 @@ const Player = mongoose.model('Player', playerSchema);
 app.get('/', (req, res) => {
   res.send('Сервер работает!');
 });
+
+app.use(authRoutes);
 
 // Пример POST-запроса для добавления игрока
 // app.post('/api/players', async (req, res) => {
