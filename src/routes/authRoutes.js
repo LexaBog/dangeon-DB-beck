@@ -14,7 +14,8 @@ router.post("/api/auth", async (req, res) => {
 
   try {
     // Проверяем, существует ли пользователь с таким Telegram ID
-    const user = await User.findOne({ telegramId }).populate("characterId");
+    const user = await User.findOne({ telegramId: Number(telegramId) }).populate("characterId");
+
 
     if (user) {
       console.log("Пользователь найден:", user);
