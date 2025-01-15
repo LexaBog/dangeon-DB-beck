@@ -21,7 +21,7 @@ router.post("/api/auth", async (req, res) => {
       // Если пользователь найден, возвращаем его данные
       return res.status(200).json({ 
         message: "Пользователь найден, переходите в игру", 
-        // user,
+        user,
         redirect: "/game" // Указываем, куда перенаправить
       });
     }
