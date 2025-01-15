@@ -32,11 +32,11 @@ const router = express.Router();
 
 router.post('/api/characters', async (req, res) => {
     const { telegramId, name } = req.body;
+    console.log("Ищем пользователя с telegramId:", telegramId);
 
     if (!telegramId || !name) {
         return res.status(400).json({ error: 'telegramId and name are required' });
     }
-
     try {
         // Проверяем, существует ли пользователь с таким telegramId
         const existingCharacter = await Character.findOne({ telegramId });
@@ -49,7 +49,7 @@ router.post('/api/characters', async (req, res) => {
 
         // Создаем нового персонажа
         const character = new Character({
-            // _id: uuidv4(),
+            _id: uuidv4(),
             telegramId,
             name,
         });
@@ -60,6 +60,8 @@ router.post('/api/characters', async (req, res) => {
         console.error('Error creating character:', error);
         res.status(500).json({ error: 'Internal server error' });
     }
+    console.log("Найденный пользователь:", user);
+
 });
 
 export default router;

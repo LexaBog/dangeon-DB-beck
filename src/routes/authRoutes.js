@@ -5,6 +5,8 @@ const router = express.Router();
 
 router.post("/api/auth", async (req, res) => {
   const { telegramId } = req.body;
+  console.log("Полученный telegramId на сервере:", req.body.telegramId);
+
 
   if (!telegramId) {
     return res.status(400).json({ error: "Telegram ID is required" });
@@ -15,10 +17,11 @@ router.post("/api/auth", async (req, res) => {
     const user = await User.findOne({ telegramId }).populate("characterId");
 
     if (user) {
+      console.log("Пользователь найден:", user);
       // Если пользователь найден, возвращаем его данные
       return res.status(200).json({ 
         message: "Пользователь найден, переходите в игру", 
-        user,
+        // user,
         redirect: "/game" // Указываем, куда перенаправить
       });
     }
