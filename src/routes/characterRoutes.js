@@ -49,7 +49,7 @@ router.post('/api/characters', async (req, res) => {
 
         // Создаем нового персонажа
         const character = new Character({
-            _id: uuidv4(),
+            // _id: uuidv4(),
             telegramId,
             name,
         });

@@ -8,6 +8,7 @@ router.post("/api/auth", async (req, res) => {
     const { telegramId, username } = req.body;
 
     console.log("Полученный telegramId на сервере:", telegramId);
+    console.log("Имя пользователя на сервере:", username);
 
     if (!telegramId) {
         return res.status(400).json({ error: "Telegram ID is required" });
@@ -29,16 +30,14 @@ router.post("/api/auth", async (req, res) => {
 
         // Если пользователя нет, создаём нового персонажа и пользователя
         const character = new Character({
-            _id: uuidv4(), // Генерация уникального ID
             telegramId,
-            name: username || "Новый игрок",
+            name: username,
         });
         await character.save();
 
         user = new User({
             telegramId,
-            username: username || "Новый пользователь",
-            characterId: character._id, // Ссылка на созданного персонажа
+            username: username,
         });
         await user.save();
 

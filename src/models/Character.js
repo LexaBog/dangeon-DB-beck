@@ -1,8 +1,8 @@
 import mongoose from "mongoose"
 
 const characterCreation = new mongoose.Schema ({
-    _id: {type: String, required: true},
-    telegramId: {type: String, required: true},
+    // _id: {type: String, required: true},
+    telegramId: { type: String, required: true, unique: true },
     name: { type: String, required: true },
     level: { type: Number, default: 1 },
     experience: { type: Number, default: 0 },
