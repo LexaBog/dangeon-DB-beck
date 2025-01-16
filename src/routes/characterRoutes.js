@@ -1,9 +1,10 @@
 import express from 'express';
+import { authenticateToken } from "../middleware/middleware.js"; // Мидлвеар для проверки токена
 import Character from '../models/Character.js';
 
 const router = express.Router();
 
-
+// Создание нового персонажа
 router.post('/api/characters', async (req, res) => {
     const { telegramId, name } = req.body;
     console.log("Ищем пользователя с telegramId:", telegramId);
@@ -23,7 +24,6 @@ router.post('/api/characters', async (req, res) => {
 
         // Создаем нового персонажа
         const character = new Character({
-            // _id: uuidv4(),
             telegramId,
             name,
         });
@@ -34,8 +34,24 @@ router.post('/api/characters', async (req, res) => {
         console.error('Error creating character:', error);
         res.status(500).json({ error: 'Internal server error' });
     }
-    console.log("Найденный пользователь:", user);
+});
 
+// Получение информации о персонаже (защищено токеном)
+router.get('/api/characters', authenticateToken, async (req, res) => {
+    const { telegramId } = req.user; // telegramId берется из проверенного токена
+
+    try {
+        const character = await Character.findOne({ telegramId });
+
+        if (!character) {
+            return res.status(404).json({ error: 'Персонаж не найден' });
+        }
+
+        res.status(200).json(character);
+    } catch (error) {
+        console.error('Ошибка при получении персонажа:', error);
+        res.status(500).json({ error: 'Ошибка сервера' });
+    }
 });
 
 export default router;
