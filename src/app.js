@@ -4,7 +4,7 @@ import connectDB from './config/db.js'; // Подключение MongoDB
 import mongoose from 'mongoose';
 import characterRoutes from './routes/characterRoutes.js';
 import authRoutes from './routes/authRoutes.js';
-import getCharacter from './routes/getCharacter.js'
+// import getCharacter from './routes/getCharacter.js'
 
 const app = express();
 
@@ -51,7 +51,7 @@ app.get('/', (req, res) => {
 });
 
 app.use(authRoutes);
-app.use(getCharacter);
+// app.use(getCharacter);
 
 
 
