@@ -72,44 +72,49 @@ router.get("/api/test-protected", authenticateToken, (req, res) => {
 
 
 router.post("/api/auth", async (req, res) => {
+  const { telegramId, username } = req.body;
+
+  if (!telegramId || !username) {
+    return res.status(400).json({ error: "Telegram ID и имя пользователя обязательны" });
+  }
+
   try {
-    // Получаем данные о пользователе из middleware или других источников
-    const userFromMiddleware = req.user; // Например, данные из токена
-
-    if (!userFromMiddleware) {
-      return res.status(401).json({ error: "Пользователь не авторизован" });
-    }
-
-    const { telegramId, username } = userFromMiddleware;
-
-    // Проверяем, существует ли пользователь
     let user = await User.findOne({ telegramId }).populate("characterId");
 
     if (user) {
+      // Сохраняем telegramId в сессии
+      req.session.telegramId = telegramId;
+
       return res.status(200).json({
         message: "Пользователь найден, переходите в игру",
         user,
-        redirect: "/",
+        redirect: "/game",
       });
     }
 
-    // Если пользователя нет, создаем нового
+    // Создаем нового пользователя и персонажа, если не найден
     const character = new Character({ telegramId, name: username });
     await character.save();
 
     user = new User({ telegramId, username, characterId: character._id });
     await user.save();
 
+    // Сохраняем telegramId в сессии
+    req.session.telegramId = telegramId;
+
     res.status(201).json({
       message: "Пользователь и персонаж созданы",
       user,
-      redirect: "/",
+      redirect: "/game",
     });
   } catch (error) {
-    console.error("Ошибка проверки пользователя:", error);
+    console.error("Ошибка авторизации:", error);
     res.status(500).json({ error: "Ошибка сервера" });
   }
 });
+
+
+
 
 
 // Пример защищённого маршрута
