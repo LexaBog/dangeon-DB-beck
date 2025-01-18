@@ -69,7 +69,6 @@ router.get("/api/test-protected", authenticateToken, (req, res) => {
 //     res.status(500).json({ error: "Ошибка сервера" });
 //   }
 // });
-
 router.post("/api/auth", async (req, res) => {
   const { telegramId, username } = req.body;
 
@@ -78,44 +77,29 @@ router.post("/api/auth", async (req, res) => {
   }
 
   try {
+    // Проверяем пользователя
     let user = await User.findOne({ telegramId }).populate("characterId");
 
-    console.log('теоеграм айди в api/auth', telegramId)
+    if (!user) {
+      // Создаем нового пользователя
+      const character = new Character({ telegramId, name: username });
+      await character.save();
 
-    if (user) {
-      // Сохраняем telegramId в сессии
-      req.session.telegramId = telegramId;
-      console.log("Сохраненный telegramId в сессии:", req.session.telegramId);
-
-      
-
-      return res.status(200).json({
-        message: "Пользователь найден",
-        user,
-        redirect: "/game",
-      });
+      user = new User({ telegramId, username, characterId: character._id });
+      await user.save();
     }
 
-    // Если пользователь не найден, создаем нового
-    const character = new Character({ telegramId, name: username });
-    await character.save();
-
-    user = new User({ telegramId, username, characterId: character._id });
-    await user.save();
-
-    // Сохраняем telegramId в сессии
-    req.session.telegramId = telegramId;
-
-    res.status(201).json({
-      message: "Пользователь и персонаж созданы",
+    // Возвращаем данные пользователя
+    res.status(200).json({
+      message: "Пользователь авторизован",
       user,
-      redirect: "/game",
     });
   } catch (error) {
     console.error("Ошибка авторизации:", error);
     res.status(500).json({ error: "Ошибка сервера" });
   }
 });
+
 
 
 

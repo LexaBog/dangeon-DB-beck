@@ -34,14 +34,12 @@ router.post('/api/characters', async (req, res) => {
 });
 
 // Получение информации о персонаже (защищено токеном)
-router.get("/api/characters", async (req, res) => {
-    console.log("Сессия в /api/characters:", req.session);
+router.post("/api/characters", async (req, res) => {
+    const { telegramId } = req.body;
   
-    if (!req.session || !req.session.telegramId) {
-      return res.status(401).json({ error: "Не авторизован" });
+    if (!telegramId) {
+      return res.status(400).json({ error: "Telegram ID обязателен" });
     }
-  
-    const telegramId = req.session.telegramId;
   
     try {
       const character = await Character.findOne({ telegramId });
@@ -55,7 +53,7 @@ router.get("/api/characters", async (req, res) => {
       console.error("Ошибка при получении персонажа:", error);
       res.status(500).json({ error: "Ошибка сервера" });
     }
-});
+  });
   
   
 
