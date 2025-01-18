@@ -3,6 +3,8 @@ import Character from '../models/Character.js';
 
 const SECRET_KEY = 'your_secret_key';
 
+
+
 export const authenticateToken = async (req, res, next) => {
   const { token } = req.body;
 

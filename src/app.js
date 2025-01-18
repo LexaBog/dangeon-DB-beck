@@ -1,5 +1,5 @@
 import express from 'express';
-import session from "express-session";
+// import session from "express-session";
 import cors from 'cors';
 import connectDB from './config/db.js'; // Подключение MongoDB
 import mongoose from 'mongoose';
@@ -7,24 +7,24 @@ import characterRoutes from './routes/characterRoutes.js';
 import authRoutes from './routes/authRoutes.js';
 import cookieParser from "cookie-parser";
 import tokenRoutes from './routes/tokenRoutes.js';
+import bodyParser from 'body-parser';
 // import getCharacter from './routes/getCharacter.js'
 
 const app = express();
 
-app.use(
-  session({
-    secret: "your-secret-key", // Убедитесь, что ключ безопасный
-    resave: false, // Не сохранять сессию, если она не изменялась
-    saveUninitialized: true, // Создавать сессию, даже если она пуста
-    cookie: { secure: true }, // Используйте true только при HTTPS
-  })
-);
+// app.use(
+//   session({
+//     secret: "your-secret-key", // Убедитесь, что ключ безопасный
+//     resave: false, // Не сохранять сессию, если она не изменялась
+//     saveUninitialized: true, // Создавать сессию, даже если она пуста
+//     cookie: { secure: true }, // Используйте true только при HTTPS
+//   })
+// );
 
 
 // Подключаем к MongoDB
 connectDB();
 app.use(cookieParser());
-app.use(tokenRoutes);
 
 const corsOptions = {
   origin:
@@ -37,7 +37,11 @@ const corsOptions = {
   allowedHeaders: ['Content-Type', 'Authorization'], // Укажите разрешенные заголовки
 };
 // app.options('*', cors(corsOptions)); // Разрешить preflight-запросы
-app.use(cors(corsOptions));
+app.use(cors());
+// app.options("*", cors(corsOptions));
+
+app.use(bodyParser.json())
+app.use(tokenRoutes);
 
 app.use((err, req, res, next) => {
   if (err.name === 'CorsError') {
