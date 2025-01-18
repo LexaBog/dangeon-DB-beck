@@ -35,6 +35,8 @@ router.post('/api/characters', async (req, res) => {
 
 // Получение информации о персонаже (защищено токеном)
 router.get("/api/characters", async (req, res) => {
+    console.log("Сессия в /api/characters:", req.session);
+  
     if (!req.session || !req.session.telegramId) {
       return res.status(401).json({ error: "Не авторизован" });
     }
@@ -53,7 +55,8 @@ router.get("/api/characters", async (req, res) => {
       console.error("Ошибка при получении персонажа:", error);
       res.status(500).json({ error: "Ошибка сервера" });
     }
-  });
+});
+  
   
 
 export default router;

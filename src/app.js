@@ -15,7 +15,7 @@ app.use(
     secret: "your-secret-key", // Убедитесь, что ключ безопасный
     resave: false, // Не сохранять сессию, если она не изменялась
     saveUninitialized: true, // Создавать сессию, даже если она пуста
-    cookie: { secure: false }, // Используйте true только при HTTPS
+    cookie: { secure: true }, // Используйте true только при HTTPS
   })
 );
 
