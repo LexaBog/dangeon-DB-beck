@@ -6,6 +6,7 @@ import mongoose from 'mongoose';
 import characterRoutes from './routes/characterRoutes.js';
 import authRoutes from './routes/authRoutes.js';
 import cookieParser from "cookie-parser";
+import tokenRoutes from './routes/tokenRoutes.js';
 // import getCharacter from './routes/getCharacter.js'
 
 const app = express();
@@ -23,6 +24,7 @@ app.use(
 // Подключаем к MongoDB
 connectDB();
 app.use(cookieParser());
+app.use(tokenRoutes);
 
 const corsOptions = {
   origin:
