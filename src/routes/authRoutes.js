@@ -80,9 +80,12 @@ router.post("/api/auth", async (req, res) => {
   try {
     let user = await User.findOne({ telegramId }).populate("characterId");
 
+    console.log('теоеграм айди в api/auth', telegramId)
+
     if (user) {
       // Сохраняем telegramId в сессии
       req.session.telegramId = telegramId;
+      
 
       return res.status(200).json({
         message: "Пользователь найден",
