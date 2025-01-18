@@ -72,39 +72,38 @@ router.get("/api/test-protected", authenticateToken, (req, res) => {
 
 
 router.post("/api/auth", async (req, res) => {
-  const { telegramId, username } = req.body; // Данные из тела запроса
-
-  // Если telegramId и username не переданы, берите их из другого источника
-  const userTelegramId = telegramId || req.user?.telegramId; // Например, из req.user
-  const userName = username || req.user?.username; // Или из сессии/заголовков
-
-  if (!userTelegramId || !userName) {
-    return res.status(400).json({ error: "Telegram ID и имя пользователя обязательны" });
-  }
-
   try {
-    let user = await User.findOne({ telegramId: userTelegramId }).populate("characterId");
+    // Получаем данные о пользователе из middleware или других источников
+    const userFromMiddleware = req.user; // Например, данные из токена
+
+    if (!userFromMiddleware) {
+      return res.status(401).json({ error: "Пользователь не авторизован" });
+    }
+
+    const { telegramId, username } = userFromMiddleware;
+
+    // Проверяем, существует ли пользователь
+    let user = await User.findOne({ telegramId }).populate("characterId");
 
     if (user) {
       return res.status(200).json({
         message: "Пользователь найден, переходите в игру",
         user,
-        tokens,
-        redirect: "/game",
+        redirect: "/",
       });
     }
 
-    // Если пользователь не найден, создайте его
-    const character = new Character({ telegramId: userTelegramId, name: userName });
+    // Если пользователя нет, создаем нового
+    const character = new Character({ telegramId, name: username });
     await character.save();
 
-    user = new User({ telegramId: userTelegramId, username: userName, characterId: character._id });
+    user = new User({ telegramId, username, characterId: character._id });
     await user.save();
 
     res.status(201).json({
       message: "Пользователь и персонаж созданы",
       user,
-      redirect: "/game",
+      redirect: "/",
     });
   } catch (error) {
     console.error("Ошибка проверки пользователя:", error);
