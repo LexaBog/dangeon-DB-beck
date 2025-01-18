@@ -70,7 +70,6 @@ router.get("/api/test-protected", authenticateToken, (req, res) => {
 //   }
 // });
 
-
 router.post("/api/auth", async (req, res) => {
   const { telegramId, username } = req.body;
 
@@ -86,13 +85,13 @@ router.post("/api/auth", async (req, res) => {
       req.session.telegramId = telegramId;
 
       return res.status(200).json({
-        message: "Пользователь найден, переходите в игру",
+        message: "Пользователь найден",
         user,
         redirect: "/game",
       });
     }
 
-    // Создаем нового пользователя и персонажа, если не найден
+    // Если пользователь не найден, создаем нового
     const character = new Character({ telegramId, name: username });
     await character.save();
 
@@ -112,7 +111,6 @@ router.post("/api/auth", async (req, res) => {
     res.status(500).json({ error: "Ошибка сервера" });
   }
 });
-
 
 
 

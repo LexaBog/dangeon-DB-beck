@@ -1,15 +1,28 @@
 import express from 'express';
+import session from "express-session";
 import cors from 'cors';
 import connectDB from './config/db.js'; // Подключение MongoDB
 import mongoose from 'mongoose';
 import characterRoutes from './routes/characterRoutes.js';
 import authRoutes from './routes/authRoutes.js';
+import cookieParser from "cookie-parser";
 // import getCharacter from './routes/getCharacter.js'
 
 const app = express();
 
+app.use(
+  session({
+    secret: "your-secret-key", // Убедитесь, что ключ безопасный
+    resave: false, // Не сохранять сессию, если она не изменялась
+    saveUninitialized: true, // Создавать сессию, даже если она пуста
+    cookie: { secure: false }, // Используйте true только при HTTPS
+  })
+);
+
+
 // Подключаем к MongoDB
 connectDB();
+app.use(cookieParser());
 
 const corsOptions = {
   origin:
