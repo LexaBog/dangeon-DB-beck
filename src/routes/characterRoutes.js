@@ -7,11 +7,11 @@ const router = express.Router();
 // Создание нового персонажа
 router.post('/api/characters', async (req, res) => {
     const { telegramId, name } = req.body;
-    console.log("Ищем пользователя с telegramId:", telegramId);
 
     if (!telegramId || !name) {
         return res.status(400).json({ error: 'telegramId and name are required' });
     }
+
     try {
         // Проверяем, существует ли пользователь с таким telegramId
         const existingCharacter = await Character.findOne({ telegramId });
@@ -23,10 +23,7 @@ router.post('/api/characters', async (req, res) => {
         }
 
         // Создаем нового персонажа
-        const character = new Character({
-            telegramId,
-            name,
-        });
+        const character = new Character({ telegramId, name });
 
         await character.save();
         res.status(201).json({ message: 'Character created successfully', character });
@@ -37,7 +34,7 @@ router.post('/api/characters', async (req, res) => {
 });
 
 // Получение информации о персонаже (защищено токеном)
-router.get('/api/characters', authenticateToken, async (req, res) => {
+router.get('/api/characters', async (req, res) => {
     const { telegramId } = req.user; // telegramId берется из проверенного токена
 
     try {

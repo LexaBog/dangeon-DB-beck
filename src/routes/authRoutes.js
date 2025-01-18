@@ -30,6 +30,8 @@ router.post("/api/auth", async (req, res) => {
       // Генерация токенов
       const tokens = generateTokens({ telegramId: user.telegramId });
 
+      console.log("токен сгенеровован", tokens)
+
       return res.status(200).json({
         message: "Пользователь найден, переходите в игру",
         user,
@@ -38,18 +40,28 @@ router.post("/api/auth", async (req, res) => {
       });
     }
 
+    // Проверяем, существует ли персонаж
+    const existingCharacter = await Character.findOne({ telegramId });
+    if (existingCharacter) {
+      return res.status(400).json({ error: "Персонаж с таким telegramId уже существует" });
+    }
+
+    // Создаём нового персонажа
     const character = new Character({ telegramId, name: username });
     await character.save();
 
+    // Создаём нового пользователя
     user = new User({ telegramId, username, characterId: character._id });
     await user.save();
 
     const tokens = generateTokens({ telegramId });
 
+    console.log("токен добавлен", tokens)
+    
     res.status(201).json({
       message: "Пользователь и персонаж созданы",
       user,
-      tokens: { accessToken, refreshToken },
+      tokens,
       redirect: "/game",
     });
   } catch (error) {
@@ -57,6 +69,7 @@ router.post("/api/auth", async (req, res) => {
     res.status(500).json({ error: "Ошибка сервера" });
   }
 });
+
 
 // Пример защищённого маршрута
 router.get("/api/protected", authenticateToken, (req, res) => {
