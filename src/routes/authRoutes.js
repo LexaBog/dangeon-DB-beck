@@ -85,6 +85,8 @@ router.post("/api/auth", async (req, res) => {
     if (user) {
       // Сохраняем telegramId в сессии
       req.session.telegramId = telegramId;
+      console.log("Сохраненный telegramId в сессии:", req.session.telegramId);
+
       
 
       return res.status(200).json({

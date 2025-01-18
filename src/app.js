@@ -30,6 +30,7 @@ const corsOptions = {
     'http://localhost:3000', // Укажите адрес вашего клиента
     'https://dungeon-crawler-game.vercel.app',
   ],
+  credentials: true, // Разрешить отправку куки
   methods: ['GET', 'POST', 'PUT', 'DELETE'], // Укажите разрешенные методы
   allowedHeaders: ['Content-Type', 'Authorization'], // Укажите разрешенные заголовки
 };

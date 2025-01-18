@@ -34,21 +34,26 @@ router.post('/api/characters', async (req, res) => {
 });
 
 // Получение информации о персонаже (защищено токеном)
-router.get('/api/characters', async (req, res) => {
-    const { telegramId } = req.user; // telegramId берется из проверенного токена
-
-    try {
-        const character = await Character.findOne({ telegramId });
-
-        if (!character) {
-            return res.status(404).json({ error: 'Персонаж не найден' });
-        }
-
-        res.status(200).json(character);
-    } catch (error) {
-        console.error('Ошибка при получении персонажа:', error);
-        res.status(500).json({ error: 'Ошибка сервера' });
+router.get("/api/characters", async (req, res) => {
+    if (!req.session || !req.session.telegramId) {
+      return res.status(401).json({ error: "Не авторизован" });
     }
-});
+  
+    const telegramId = req.session.telegramId;
+  
+    try {
+      const character = await Character.findOne({ telegramId });
+  
+      if (!character) {
+        return res.status(404).json({ error: "Персонаж не найден" });
+      }
+  
+      res.status(200).json(character);
+    } catch (error) {
+      console.error("Ошибка при получении персонажа:", error);
+      res.status(500).json({ error: "Ошибка сервера" });
+    }
+  });
+  
 
 export default router;

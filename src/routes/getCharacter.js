@@ -4,6 +4,8 @@ import Character from "../models/Character.js";
 const router = express.Router()
 
 router.get("/api/characters", async (req, res) => {
+    console.log("Сессия в /api/characters:", req.session);
+
     const telegramId = req.session?.telegramId; // Берем telegramId из сессии
   
     if (!telegramId) {
