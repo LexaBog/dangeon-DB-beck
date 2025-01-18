@@ -89,6 +89,8 @@ router.post("/api/auth", async (req, res) => {
       return res.status(200).json({
         message: "Пользователь найден, переходите в игру",
         user,
+        tokens,
+        redirect: "/game",
       });
     }
 
@@ -102,6 +104,7 @@ router.post("/api/auth", async (req, res) => {
     res.status(201).json({
       message: "Пользователь и персонаж созданы",
       user,
+      redirect: "/game",
     });
   } catch (error) {
     console.error("Ошибка проверки пользователя:", error);
