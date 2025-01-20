@@ -16,53 +16,66 @@ router.post('/api/validate-token', (req, res) => {
   }
 
   try {
-    const decoded = jwt.verify(token, SECRET_KEY);
-    res.status(200).json({ valid: true, data: decoded });
+    const decoded = jwt.verify(token, SECRET_KEY); // Расшифровка токена
+    const { telegramId, username } = decoded;
+
+    if (!telegramId || !username) {
+      return res.status(400).json({ error: "Некорректный токен" });
+    }
+
+    console.log("Токен успешно верифицирован:", decoded);
+    res.json({ data: { telegramId, username } });
   } catch (err) {
-    res.status(401).json({ valid: false, error: 'Invalid token' });
+    console.error("Ошибка валидации токена:", err.message);
+    res.status(401).json({ error: "Недействительный токен" });
   }
 });
-
 
 router.post('/api/auth', async (req, res) => {
   const { telegramId, username } = req.body;
 
-  // if (typeof telegramId !== 'string') telegramId = String(telegramId);
-  // if (typeof username !== 'string') username = String(username);
+  console.log("Полученные данные в /api/auth:", { telegramId, username });
 
-  console.log("Полученные данные:", { telegramId, username });
-
-  if (!telegramId) {
-      return res.status(400).json({ error: "Telegram ID и имя пользователя обязательны" });
+  if (!telegramId || !username) {
+    return res.status(400).json({ error: "Telegram ID и имя пользователя обязательны" });
   }
 
   try {
-      // Проверяем, существует ли уже пользователь
-      let user = await User.findOne({ telegramId }).populate("characterId");
-      if (user) {
-          return res.status(200).json({
-              message: "Пользователь найден",
-              user,
-          });
+    // Проверяем, существует ли пользователь
+    let user = await User.findOne({ telegramId }).populate("characterId");
+
+    if (user) {
+      console.log("Пользователь найден:", user);
+
+      // Обновляем имя пользователя, если оно изменилось
+      if (user.username !== username) {
+        user.username = username;
+        await user.save();
       }
 
-      // Если пользователь не найден, создаем нового
-      const character = new Character({ telegramId, name: username });
-      await character.save();
-
-      user = new User({ telegramId, username, characterId: character._id });
-      console.log(user)
-      await user.save();
-
-      res.status(201).json({
-          message: "Пользователь создан",
-          user,
+      return res.status(200).json({
+        message: "Пользователь найден",
+        user,
       });
+    }
+
+    // Если пользователя нет, создаём персонажа и пользователя
+    const character = new Character({ telegramId, name: username });
+    await character.save();
+
+    user = new User({ telegramId, username, characterId: character._id });
+    await user.save();
+
+    console.log("Пользователь и персонаж созданы:", { user, character });
+
+    res.status(201).json({
+      message: "Пользователь и персонаж созданы",
+      user,
+    });
   } catch (error) {
-      console.error("Ошибка авторизации:", error);
-      res.status(500).json({ error: "Ошибка сервера" });
+    console.error("Ошибка авторизации:", error);
+    res.status(500).json({ error: "Ошибка сервера" });
   }
 });
-
 
 export default router;

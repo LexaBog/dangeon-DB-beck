@@ -3,15 +3,16 @@ import Character from "../models/Character.js";
 
 const router = express.Router();
 
-router.post("/api/characters", async (req, res) => {
-  const { telegramId } = req.body;
+router.post('/api/character', async (req, res) => {
+  const { characterId } = req.body;
+  console.log('персонаж харРОут', characterId)
 
-  if (!telegramId) {
-    return res.status(400).json({ error: "Telegram ID обязателен" });
+  if (!characterId) {
+    return res.status(400).json({ error: "ID персонажа обязателен" });
   }
 
   try {
-    const character = await Character.findOne({ telegramId });
+    const character = await Character.findById(characterId);
 
     if (!character) {
       return res.status(404).json({ error: "Персонаж не найден" });
@@ -23,5 +24,6 @@ router.post("/api/characters", async (req, res) => {
     res.status(500).json({ error: "Ошибка сервера" });
   }
 });
+
 
 export default router;
