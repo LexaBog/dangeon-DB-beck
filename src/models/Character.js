@@ -3,6 +3,7 @@ import mongoose from "mongoose"
 const characterCreation = new mongoose.Schema ({
     telegramId: { type: String, required: true, unique: true },
     name: { type: String, required: true },
+    gold: { type: Number, default: 1 },
     level: { type: Number, default: 1 },
     experience: { type: Number, default: 0 },
     health: { type: Number, default: 10 },

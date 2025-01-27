@@ -7,6 +7,7 @@ import authRoutes from './routes/authRoutes.js';
 import cookieParser from "cookie-parser";
 import tokenRoutes from './routes/tokenRoutes.js';
 import bodyParser from 'body-parser';
+import dangeonRout from './routes/dangeonRout/dangeonRout.js'
 
 const app = express();
 
@@ -60,6 +61,8 @@ app.get('/', (req, res) => {
 
 app.use(authRoutes);
 // app.use(getCharacter);
+
+app.use(dangeonRout);
 
 
 
