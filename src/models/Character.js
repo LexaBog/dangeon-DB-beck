@@ -7,6 +7,7 @@ const characterCreation = new mongoose.Schema ({
     level: { type: Number, default: 1 },
     experience: { type: Number, default: 0 },
     health: { type: Number, default: 10 },
+    maxHealth: { type: Number, default: 10 },
     mana: {type: Number, default: 0},
     strength: { type: Number, default: 0 },
     agility: { type: Number, default: 0 },

@@ -49,4 +49,24 @@ router.post('/api/characters/update', async (req, res) => {
 });
 
 
+
+// временый роут для получения характера для офлайн версии
+router.get("/api/character/:telegramId", async (req, res) => {
+  try {
+    const { telegramId } = req.params; // Извлекаем telegramId из параметров URL
+    const character = await Character.findOne({ telegramId }); // Ищем персонажа по telegramId
+
+    if (!character) {
+      return res.status(404).json({ error: "Персонаж не найден" });
+    }
+
+    res.status(200).json(character); // Возвращаем данные о персонаже
+  } catch (error) {
+    console.error("Ошибка получения персонажа:", error.message);
+    res.status(500).json({ error: "Ошибка сервера" });
+  }
+});
+
 export default router;
+
+
