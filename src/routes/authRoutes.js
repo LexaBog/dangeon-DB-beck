@@ -114,11 +114,34 @@ router.post('/api/characters/update', async (req, res) => {
     // Сохраняем изменения в базе
     await character.save();
 
-    console.log('Обновленный персонаж:', character);
+    // console.log('Обновленный персонаж:', character);
     res.status(200).json({ message: 'Персонаж успешно обновлен.', character });
   } catch (error) {
     console.error('Ошибка при обновлении персонажа:', error);
     res.status(500).json({ error: 'Ошибка сервера при обновлении персонажа.' });
+  }
+});
+
+// Обновление данных персонажа
+router.put("/api/character/:telegramId", async (req, res) => {
+  const { telegramId } = req.params;
+  const updates = req.body;
+
+  try {
+    const character = await Character.findOneAndUpdate(
+      { telegramId },
+      { $set: updates },
+      { new: true, runValidators: true } // Возвращает обновленный документ и применяет валидацию
+    );
+
+    if (!character) {
+      return res.status(404).json({ error: "Персонаж не найден" });
+    }
+
+    res.status(200).json(character); // Возвращаем обновленные данные персонажа
+  } catch (error) {
+    console.error("Ошибка обновления персонажа:", error.message);
+    res.status(500).json({ error: "Ошибка сервера" });
   }
 });
 

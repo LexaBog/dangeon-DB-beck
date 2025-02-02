@@ -16,6 +16,12 @@ const userSchema = new mongoose.Schema(
         startTime: { type: Date, required: true },
         endTime: { type: Date, required: true },
         duration: { type: Number, required: true },
+
+        goldReward: { type: Number, required: true, default: 0 },
+        experienceReward: { type: Number, required: true, default: 0 },
+        cardDropChance: { type: Number, default: 0 },
+
+        isRewardCollected: { type: Boolean, default: true }, //отслеживание кнопки завершения данджа
       },
     ],
   },

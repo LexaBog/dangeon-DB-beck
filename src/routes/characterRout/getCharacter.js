@@ -1,12 +1,12 @@
 import express from 'express'
-import Character from "../models/Character.js";
+import Character from "../../models/Character.js";
 
 const router = express.Router()
 
 router.get("/api/characters", async (req, res) => {
     console.log("Сессия в /api/characters:", req.session);
 
-    const telegramId = req.session?.telegramId; // Берем telegramId из сессии
+    // const telegramId = req.session?.telegramId; // Берем telegramId из сессии
   
     if (!telegramId) {
       return res.status(401).json({ error: "Не авторизован" });

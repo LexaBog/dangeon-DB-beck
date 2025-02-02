@@ -2,12 +2,14 @@ import express from 'express';
 import cors from 'cors';
 import connectDB from './config/db.js'; // Подключение MongoDB
 import mongoose from 'mongoose';
-import characterRoutes from './routes/characterRoutes.js';
+import characterRoutes from './routes/characterRout/characterRoutes.js';
 import authRoutes from './routes/authRoutes.js';
 import cookieParser from "cookie-parser";
-import tokenRoutes from './routes/tokenRoutes.js';
+import GenereteDungeons1_10 from "./routes/dangeonRout/GenereteDungeons1_10.js"
 import bodyParser from 'body-parser';
 import dangeonRout from './routes/dangeonRout/dangeonRout.js'
+import rewardRoutes from './routes/rewards/rewardRoutes.js';
+
 
 const app = express();
 
@@ -30,7 +32,7 @@ app.use(cors());
 // app.options("*", cors(corsOptions));
 
 app.use(bodyParser.json())
-app.use(tokenRoutes);
+// app.use(tokenRoutes);
 
 app.use((err, req, res, next) => {
   if (err.name === 'CorsError') {
@@ -44,6 +46,12 @@ app.use(express.json());
 
 // Подключение маршрутов для создания персонажа
 app.use(characterRoutes);
+
+app.use(GenereteDungeons1_10);
+
+app.use(rewardRoutes);
+
+// app.use(rewardRoutes);
 
 // Пример схемы и модели
 const playerSchema  = new mongoose.Schema({

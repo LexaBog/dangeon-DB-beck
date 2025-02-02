@@ -9,6 +9,7 @@ const characterCreation = new mongoose.Schema({
     points: { type: Number, default: 0 }, // Поле из HEAD
     maxHealth: { type: Number, default: 100 },
     health: { type: Number, default: 100 },
+    regenRate: { type: Number, default: 1 }, // Скорость регенерации (ХП/сек)
     maxMana: { type: Number, default: 20 },
     mana: { type: Number, default: 20 },
     strength: { type: Number, default: 0 },
@@ -24,5 +25,5 @@ const characterCreation = new mongoose.Schema({
   
   const Character = mongoose.model('Character', characterCreation);
   
-  export default Character;
+export default Character;
   
