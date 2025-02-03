@@ -1,5 +1,7 @@
 // src/service/rewardService.js
 import User from "../models/User.js";
+import Character from "../models/Character.js";
+import { checkAndLevelUp } from "./levelService.js";
 
 /**
  * Завершает подземелье для пользователя, проверяет, что оно завершено,
@@ -54,10 +56,24 @@ export const completeDungeon  = async (telegramId, dungeonId) => {
     experience: activeDungeon.experienceReward,
   };
 
+  // начисление наград 
+  const character = await Character.findOne({telegramId});
+  if (!character) {
+    throw new Error("пурсонаж не найден для начисления наград");
+  }
+
+    // Проверяем, достаточно ли опыта для повышения уровня
+  const updatedCharacter = await checkAndLevelUp(character);
+
+  character.gold += activeDungeon.goldReward;
+  character.experience += activeDungeon.experienceReward;
+  await character.save();
+
   // Удаляем активное подземелье из массива
   user.activeDungeons = user.activeDungeons.filter(
     (d) => d._id.toString() !== activeDungeon._id.toString()
   );
+
   
   await user.save();
   
@@ -66,7 +82,9 @@ export const completeDungeon  = async (telegramId, dungeonId) => {
     rewards: {
       gold: activeDungeon.goldReward,
       experience: activeDungeon.experienceReward,
+      cardHero: null,
     },
+    updatedCharacter: character,
     dungeon: activeDungeon,
   };
 };

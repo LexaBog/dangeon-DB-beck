@@ -5,6 +5,7 @@ const characterCreation = new mongoose.Schema({
     name: { type: String, required: true },
     gold: { type: Number, default: 1 },
     level: { type: Number, default: 1 },
+    points: { type: Number, default: 0 },
     experience: { type: Number, default: 0 },
     points: { type: Number, default: 0 }, // Поле из HEAD
     maxHealth: { type: Number, default: 100 },
@@ -20,6 +21,7 @@ const characterCreation = new mongoose.Schema({
     baseAttack: { type: Number, default: 5 },
     equippedItems: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Equipment' }], 
     inventory: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Equipment' }], 
+    cardHero: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Equipment' }],
     lastHealthUpdate: { type: Date, default: Date.now }, 
   }, { timestamps: true });
   
